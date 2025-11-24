@@ -20,7 +20,7 @@ namespace Gameplay.Movement.Sources
         public float PitchSensitivityDeg = 2f;
 
         [Header("Jump Settings")]
-        public float JumpSpeed = 6f; // 近似跳跃起跳速度（m/s），以后可从英雄配置中注入
+        public float JumpSpeed = 9f; // 近似跳跃起跳速度（m/s），以后可从英雄配置中注入
 
         [Header("Input Axes")]
         public string HorizontalAxis = "Horizontal";

@@ -57,7 +57,15 @@ namespace Gameplay.Movement.Core
 
             // 3. 普通运动路径：从上一帧状态取出速度
             Vector3 v = state.Velocity;
-
+            
+            // 在进入本帧计算前，若上一帧结束后状态标记为已在地面，
+            // 则认为与地面的碰撞已经“吃掉”所有向下动量，这里直接清零向下速度，
+            // 避免这一虚假的向下速度参与本帧的跳跃/冲量叠加。
+            if (state.IsGrounded && v.y <= 0f)
+            {
+                v.y = 0f;
+            }
+            
             // 3.1 水平速度：在“当前速度”和“期望速度”之间用加减速/摩擦收敛，
             //     地面与空中使用不同的加减速参数，避免水平冲量被立即抹掉，同时体现空中控制较弱。
             Vector3 currentHorizontal = new Vector3(v.x, 0f, v.z);
@@ -96,7 +104,7 @@ namespace Gameplay.Movement.Core
             if (state.IsGrounded)
             {
                 // 贴地时若竖直速度向下，轻微压住避免抖动，同时形成简单的“地面吸附”效果。
-                if (v.y < 0f)
+                if (v.y <= 0f)
                     v.y = -5f;
             }
             else

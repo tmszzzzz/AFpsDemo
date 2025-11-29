@@ -72,6 +72,10 @@ namespace Game
         {
             PlayerId = ja.playerId;
             IsJoined = true;
+            
+            // 建立 UDP 绑定：告知服务器此 UDP socket 属于哪个 playerId
+            _netClient.SendUdpBind(PlayerId);
+            
             Debug.Log($"Joined server as player {PlayerId}, serverProto={ja.serverProtocolVersion}");
         }
 

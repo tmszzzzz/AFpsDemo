@@ -88,6 +88,14 @@ namespace Net
                 LastError = ex.Message;
             }
         }
+        
+        public void SendUdpBind(uint playerId)
+        {
+            if (_udpClient == null) return;
+            var bind = new UdpBind { playerId = playerId };
+            var msg  = ProtoSerializer.EncodeUdpBind(bind);
+            SendUdp(msg);
+        }
 
         public void PumpMessages()
         {

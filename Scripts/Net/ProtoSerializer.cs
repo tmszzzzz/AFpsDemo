@@ -125,6 +125,25 @@ namespace Net
             Buffer.BlockCopy(bytes, 8, payload, 0, payload.Length);
             return new NetMessage { Header = header, Payload = payload };
         }
+        
+        public static NetMessage EncodeUdpBind(UdpBind bind)
+        {
+            using var ms = new System.IO.MemoryStream();
+            WriteU16(ms, 0);
+            WriteU16(ms, (ushort)MsgId.UdpBind);
+            WriteU32(ms, 0);
+            WriteU32(ms, bind.playerId);
+
+            var bytes = ms.ToArray();
+            ushort length = (ushort)bytes.Length;
+            bytes[0] = (byte)(length & 0xFF);
+            bytes[1] = (byte)((length >> 8) & 0xFF);
+
+            var header = new MsgHeader { length = length, msgId = (ushort)MsgId.UdpBind, seq = 0 };
+            var payload = new byte[length - 8];
+            Buffer.BlockCopy(bytes, 8, payload, 0, payload.Length);
+            return new NetMessage { Header = header, Payload = payload };
+        }
 
         #endregion
 

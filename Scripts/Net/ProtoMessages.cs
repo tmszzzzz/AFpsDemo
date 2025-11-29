@@ -8,6 +8,7 @@ namespace Net
         JoinAccept  = 2,
         Ping        = 10,
         Pong        = 11,
+        UdpBind     = 20,
     }
 
     public struct MsgHeader
@@ -38,6 +39,11 @@ namespace Net
     {
         public uint clientTime;
         public uint serverTime;
+    }
+    
+    public struct UdpBind
+    {
+        public uint playerId; // 要绑定到 UDP 通道的玩家 ID
     }
 
     public struct NetMessage

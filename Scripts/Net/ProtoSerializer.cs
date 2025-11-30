@@ -6,6 +6,11 @@ namespace Net
     public static class ProtoSerializer
     {
         #region 写入工具
+        
+        private static void WriteU8(System.IO.Stream s, byte v)
+        {
+            s.WriteByte(v);
+        }
 
         private static void WriteU16(System.IO.Stream s, ushort v)
         {
@@ -31,6 +36,12 @@ namespace Net
             WriteU16(s, (ushort)bytes.Length);
             s.Write(bytes, 0, bytes.Length);
         }
+        
+        private static void WriteF32(System.IO.Stream s, float v)
+        {
+            uint bits = BitConverter.ToUInt32(BitConverter.GetBytes(v), 0);
+            WriteU32(s, bits);
+        }
 
         #endregion
 
@@ -45,6 +56,13 @@ namespace Net
                 if (r <= 0) return false;
                 read += r;
             }
+            return true;
+        }
+        
+        private static bool ReadU8(byte[] buf, ref int offset, out byte v)
+        {
+            if (offset + 1 > buf.Length) { v = 0; return false; }
+            v = buf[offset++];
             return true;
         }
 
@@ -74,6 +92,14 @@ namespace Net
             if (offset + len > buf.Length) return false;
             s = Encoding.UTF8.GetString(buf, offset, len);
             offset += len;
+            return true;
+        }
+        
+        private static bool ReadF32(byte[] buf, ref int offset, out float v)
+        {
+            v = 0f;
+            if (!ReadU32(buf, ref offset, out var bits)) return false;
+            v = BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
             return true;
         }
 
@@ -144,6 +170,39 @@ namespace Net
             Buffer.BlockCopy(bytes, 8, payload, 0, payload.Length);
             return new NetMessage { Header = header, Payload = payload };
         }
+        
+        public static NetMessage EncodeInputCommand(InputCommand ic)
+        {
+            using var ms = new System.IO.MemoryStream();
+
+            // 先占位头部
+            WriteU16(ms, 0); // length
+            WriteU16(ms, (ushort)MsgId.InputCommand);
+            WriteU32(ms, 0); // seq 暂时用 0，你之后可以在这里填真实序号
+
+            // 写 payload，顺序必须与 C++ DecodeInputCommand 一致
+            WriteU32(ms, ic.playerId);
+            WriteU16(ms, ic.seq);
+            WriteU32(ms, ic.clientTick);
+            WriteF32(ms, ic.moveX);
+            WriteF32(ms, ic.moveY);
+            WriteF32(ms, ic.yaw);
+            WriteF32(ms, ic.pitch);
+            WriteU32(ms, ic.buttonMask);
+
+            var bytes  = ms.ToArray();
+            ushort len = (ushort)bytes.Length;
+
+            // 回写 length
+            bytes[0] = (byte)(len & 0xFF);
+            bytes[1] = (byte)((len >> 8) & 0xFF);
+
+            var header  = new MsgHeader { length = len, msgId = (ushort)MsgId.InputCommand, seq = 0 };
+            var payload = new byte[len - 8];
+            Buffer.BlockCopy(bytes, 8, payload, 0, payload.Length);
+
+            return new NetMessage { Header = header, Payload = payload };
+        }
 
         #endregion
 
@@ -177,6 +236,77 @@ namespace Net
             if (!ReadU32(msg.Payload, ref offset, out pong.serverTime)) return false;
             return true;
         }
+        
+        public static bool DecodeWorldSnapshot(NetMessage msg, out WorldSnapshot ws)
+        {
+            ws = default;
+            int offset = 0;
+
+            if (!ReadU32(msg.Payload, ref offset, out ws.serverTick)) return false;
+            if (!ReadU16(msg.Payload, ref offset, out var playerCount)) return false;
+
+            if (playerCount == 0)
+            {
+                ws.players = Array.Empty<PlayerSnapshot>();
+                return true;
+            }
+
+            ws.players = new PlayerSnapshot[playerCount];
+
+            for (int i = 0; i < playerCount; ++i)
+            {
+                PlayerSnapshot p = default;
+
+                if (!ReadU32(msg.Payload, ref offset, out p.playerId)) return false;
+                if (!ReadU32(msg.Payload, ref offset, out p.heroId))   return false;
+
+                if (!ReadF32(msg.Payload, ref offset, out p.posX)) return false;
+                if (!ReadF32(msg.Payload, ref offset, out p.posY)) return false;
+                if (!ReadF32(msg.Payload, ref offset, out p.posZ)) return false;
+
+                if (!ReadF32(msg.Payload, ref offset, out p.velX)) return false;
+                if (!ReadF32(msg.Payload, ref offset, out p.velY)) return false;
+                if (!ReadF32(msg.Payload, ref offset, out p.velZ)) return false;
+
+                if (!ReadF32(msg.Payload, ref offset, out p.yaw))   return false;
+                if (!ReadF32(msg.Payload, ref offset, out p.pitch)) return false;
+
+                if (!ReadU8(msg.Payload, ref offset, out p.locomotionState)) return false;
+                if (!ReadU8(msg.Payload, ref offset, out p.actionState))     return false;
+                if (!ReadU8(msg.Payload, ref offset, out p.activeSkillSlot)) return false;
+                if (!ReadU8(msg.Payload, ref offset, out p.activeSkillPhase))return false;
+
+                if (!ReadU32(msg.Payload, ref offset, out p.statusFlags)) return false;
+                if (!ReadU16(msg.Payload, ref offset, out p.health))      return false;
+                if (!ReadU16(msg.Payload, ref offset, out p.energy))      return false;
+
+                ws.players[i] = p;
+            }
+
+            return true;
+        }
+
+        public static bool DecodeGameEvent(NetMessage msg, out GameEvent ev)
+        {
+            ev = default;
+            int offset = 0;
+
+            if (!ReadU8(msg.Payload, ref offset, out var type)) return false;
+            ev.type = (GameEventType)type;
+
+            if (!ReadU32(msg.Payload, ref offset, out ev.serverTick))     return false;
+            if (!ReadU32(msg.Payload, ref offset, out ev.casterPlayerId)) return false;
+
+            if (!ReadU8(msg.Payload, ref offset, out ev.skillSlot))  return false;
+            if (!ReadU8(msg.Payload, ref offset, out ev.phaseIndex)) return false;
+
+            if (!ReadU32(msg.Payload, ref offset, out ev.targetId)) return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.param0))   return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.param1))   return false;
+
+            return true;
+        }
+
 
         #endregion
 

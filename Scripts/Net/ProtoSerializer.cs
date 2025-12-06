@@ -297,12 +297,15 @@ namespace Net
             if (!ReadU32(msg.Payload, ref offset, out ev.serverTick))     return false;
             if (!ReadU32(msg.Payload, ref offset, out ev.casterPlayerId)) return false;
 
-            if (!ReadU8(msg.Payload, ref offset, out ev.skillSlot))  return false;
-            if (!ReadU8(msg.Payload, ref offset, out ev.phaseIndex)) return false;
-
             if (!ReadU32(msg.Payload, ref offset, out ev.targetId)) return false;
-            if (!ReadF32(msg.Payload, ref offset, out ev.param0))   return false;
-            if (!ReadF32(msg.Payload, ref offset, out ev.param1))   return false;
+
+            if (!ReadU8(msg.Payload, ref offset, out ev.u8Param0)) return false;
+            if (!ReadU8(msg.Payload, ref offset, out ev.u8Param1)) return false;
+
+            if (!ReadU32(msg.Payload, ref offset, out ev.u32Param0)) return false;
+
+            if (!ReadF32(msg.Payload, ref offset, out ev.f32Param0)) return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.f32Param1)) return false;
 
             return true;
         }

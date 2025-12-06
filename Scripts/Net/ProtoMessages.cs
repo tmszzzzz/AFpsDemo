@@ -114,11 +114,16 @@ namespace Net
         public GameEventType type;
         public uint          serverTick;
         public uint          casterPlayerId;
-        public byte          skillSlot;
-        public byte          phaseIndex;
+
         public uint          targetId;
-        public float         param0;
-        public float         param1;
+
+        public byte          u8Param0;
+        public byte          u8Param1;
+
+        public uint          u32Param0;
+
+        public float         f32Param0;
+        public float         f32Param1;
     }
 
     public struct NetMessage

@@ -10,7 +10,6 @@ namespace Others
         public HeroActor heroActor;
         public void Start()
         {
-            heroActor.Core.AddMovementSource(new LocalInputMovementSource());
         }
     }
 }

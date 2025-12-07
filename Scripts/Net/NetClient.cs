@@ -96,6 +96,13 @@ namespace Net
             var msg  = ProtoSerializer.EncodeUdpBind(bind);
             SendUdp(msg);
         }
+        
+        public void SendInputCommand(InputCommand ic)
+        {
+            if (_udpClient == null) return;
+            var msg = ProtoSerializer.EncodeInputCommand(ic);
+            SendUdp(msg);
+        }
 
         public void PumpMessages()
         {

@@ -21,6 +21,7 @@ namespace Net
                     {
                         _clientGame.OnJoinAccept(ja);
                     }
+
                     break;
 
                 case MsgId.Pong:
@@ -28,8 +29,15 @@ namespace Net
                     {
                         _clientGame.OnPong(pong);
                     }
-                    break;
 
+                    break;
+                case MsgId.WorldSnapshot:
+                    if (ProtoSerializer.DecodeWorldSnapshot(msg, out var ws))
+                    {
+                        _clientGame.OnWorldSnapshot(ws);
+                    }
+
+                    break;
                 default:
                     // 里程碑 2 仅处理上述两类消息
                     break;

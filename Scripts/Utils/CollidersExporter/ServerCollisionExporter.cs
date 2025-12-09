@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Utils.CollidersExporter
 {
+#if UNITY_EDITOR
 
     /// <summary>
     /// 导出服务器使用的场景碰撞数据：
@@ -169,5 +170,5 @@ namespace Utils.CollidersExporter
             }
         }
     }
-
+#endif
 }

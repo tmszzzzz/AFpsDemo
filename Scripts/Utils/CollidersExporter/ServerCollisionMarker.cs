@@ -2,6 +2,7 @@
 
 namespace Utils.CollidersExporter
 {
+#if UNITY_EDITOR
     public enum ServerSurfaceType
     {
         Walkable = 0,     // 可站立
@@ -14,5 +15,6 @@ namespace Utils.CollidersExporter
         [Tooltip("用于服务器碰撞系统的表面类型标记")]
         public ServerSurfaceType surfaceType = ServerSurfaceType.Walkable;
     }
+#endif
 }
 

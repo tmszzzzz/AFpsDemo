@@ -179,5 +179,24 @@ namespace Game
 
             // 简单版本先不处理“离线玩家”的清理；后续可根据 ws.players 做差集删掉多余视图
         }
+
+        public void OnGameEvent(GameEvent ev)
+        {
+            // 1) 最小验收：先打印
+            Debug.Log($"[GameEvent] type={ev.type} caster={ev.casterPlayerId} tick={ev.serverTick}");
+
+            // 2) 后续扩展：分发给对应的玩家视图 / 特效系统 / UI 系统
+            if (_playerViews.TryGetValue(ev.casterPlayerId, out var view) && view != null)
+            {
+                switch (ev.type)
+                {
+                    case GameEventType.DashStarted:
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
     }
 }

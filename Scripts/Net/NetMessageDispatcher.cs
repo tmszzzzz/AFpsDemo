@@ -38,8 +38,14 @@ namespace Net
                     }
 
                     break;
+                case MsgId.GameEvent:
+                    if (ProtoSerializer.DecodeGameEvent(msg, out var ev))
+                    {
+                        _clientGame.OnGameEvent(ev);
+                    }
+
+                    break;
                 default:
-                    // 里程碑 2 仅处理上述两类消息
                     break;
             }
         }

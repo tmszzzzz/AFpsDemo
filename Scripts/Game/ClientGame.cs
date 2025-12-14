@@ -89,11 +89,11 @@ namespace Game
 
                 // 3. 按键 bitmask（这里只做一个最小集，后续可扩展）
                 uint buttonMask = 0;
-                if (Input.GetButtonDown("Jump"))
+                if (Input.GetButton("Jump"))
                     buttonMask |= InputButtons.BUTTON_JUMP;
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKey(KeyCode.E))
                     buttonMask |= InputButtons.BUTTON_SKILL_E;
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (Input.GetKey(KeyCode.LeftShift))
                     buttonMask |= InputButtons.BUTTON_SKILL_SHIFT;
 
                 // 4. 组装 InputCommand

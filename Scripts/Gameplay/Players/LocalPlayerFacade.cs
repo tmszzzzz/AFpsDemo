@@ -1,5 +1,8 @@
-﻿using Gameplay.LocalInput;
+﻿using Game;
+using Gameplay.LocalInput;
+using Gameplay.Movement.Core;
 using Gameplay.ThirdPartyAdapters.Kinemation;
+using Net;
 using UnityEngine;
 
 namespace Gameplay.Players
@@ -20,14 +23,31 @@ namespace Gameplay.Players
         {
             if (kinemation == null) kinemation = GetComponentInChildren<KinemationController>();
         }
+        
+        
+        /// <summary>
+        /// 服务器权威回放：本地与远端一致，都由快照驱动移动/朝向。
+        /// 字段名以你们 Net.WorldSnapshot 的 player 元素为准。
+        /// </summary>
+        public void ApplyServerSnapshot(PlayerSnapshot p)
+        {
+            transform.position = new Vector3(p.posX, p.posY, p.posZ);
+            if(!driveCameraRotation)
+            {
+                transform.rotation = Quaternion.Euler(0f, p.yaw, 0f);
+                if (cameraPivot != null)
+                {
+                    cameraPivot.localRotation = Quaternion.Euler(p.pitch, 0f, 0f);
+                }
+            }
+        }
 
         public void ApplyLocalInput(in LocalInputFrame f)
         {
             if (driveCameraRotation && cameraPivot != null)
             {
-                // 你们现有是 yaw 作用于角色根，pitch 作用于 cameraPivot。
-                // 这里仅更新 pitch；yaw 由 ClientWorld/本地根对象转向决定（见 ClientWorld）。
                 cameraPivot.localRotation = Quaternion.Euler(f.pitch, 0f, 0f);
+                ClientWorld.Instance.ApplyLocalYaw(f.yaw);
             }
 
             if (kinemation != null)

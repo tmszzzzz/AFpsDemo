@@ -341,9 +341,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 316319595}
-  - component: {fileID: 316319594}
   - component: {fileID: 316319597}
   - component: {fileID: 316319596}
+  - component: {fileID: 316319598}
   m_Layer: 0
   m_Name: DoSomething
   m_TagString: Untagged
@@ -351,19 +351,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &316319594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 316319593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4a3a50644744b0facf0dbc3b0646fc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heroActor: {fileID: 2122558422}
 --- !u!4 &316319595
 Transform:
   m_ObjectHideFlags: 0
@@ -373,7 +360,7 @@ Transform:
   m_GameObject: {fileID: 316319593}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25.332764, y: -5.531267, z: 5.919426}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -407,7 +394,35 @@ MonoBehaviour:
   TcpPort: 5000
   UdpPort: 5001
   PlayerName: Player
-  PlayerViewPrefab: {fileID: 0}
+  LocalPlayerPrefab: {fileID: 8770904959054442930, guid: 50e805e26f51d2e4c852416c8e91ecd7,
+    type: 3}
+  RemotePlayerPrefab: {fileID: -3607570795352206730, guid: 21f047d119dfbcc47829602465120174,
+    type: 3}
+  SpawnRoot: {fileID: 0}
+  inputSampler: {fileID: 316319598}
+  sendWeaponButtonsToServer: 0
+--- !u!114 &316319598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316319593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5e7268661df4bdd97921ddd1b61535c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lockCursor: 1
+  mouseSensitivity: 2
+  pitchMin: -80
+  pitchMax: 80
+  jumpKey: 32
+  useKey: 101
+  sprintKey: 304
+  reloadKey: 114
+  fireMouseButton: 0
+  aimMouseButton: 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +441,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &330585544
 AudioListener:
   m_ObjectHideFlags: 0

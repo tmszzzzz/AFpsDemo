@@ -61,18 +61,24 @@ namespace Game
             _netClient.PumpMessages();
 
             if (!IsJoined) return;
+            
+            // 定时发送 Ping
+            _pingTimer += Time.deltaTime;
+            if (_pingTimer >= 1.0f && IsJoined)
+            {
+                _pingTimer = 0f;
+
+                uint clientTime = (uint)(Time.realtimeSinceStartup * 1000.0f);
+                var ping = new Net.Ping { clientTime = clientTime };
+                var msg = ProtoSerializer.EncodePing(ping);
+                _netClient.SendUdp(msg);
+            }
 
             // 1) 输入 -> 本地表现 + 发包
             _sender.Tick(Time.deltaTime);
-
-            // 2) 把 yaw 同步到本地玩家根（你们原先是用 Camera.main.eulerAngles.y）
-            //    现在改用 inputSampler 的绝对 yaw。
-            if (inputSampler != null)
-            {
-                var frame = inputSampler.Sample();
-                _world.ApplyLocalYaw(frame.yaw);
-            }
         }
+        
+        private float _pingTimer = 0f;
 
         private void OnDestroy()
         {
@@ -90,6 +96,7 @@ namespace Game
         {
             PlayerId = ja.playerId;
             IsJoined = true;
+            _netClient.SendUdpBind(PlayerId);
 
             // spawn local
             var local = _world.SpawnLocal(PlayerId, LocalPlayerPrefab);
@@ -99,8 +106,11 @@ namespace Game
 
         public void OnPong(Pong pong)
         {
+            uint nowClientTime = (uint)(Time.realtimeSinceStartup * 1000.0f);
+            uint rtt = nowClientTime - pong.clientTime;
+
+            LastPingMs = rtt;
             LastServerTime = pong.serverTime;
-            // ping 计算逻辑你们原先在 ClientGame 里有，可按需迁移。
         }
 
         public void OnWorldSnapshot(WorldSnapshot ws)
@@ -111,7 +121,8 @@ namespace Game
 
         public void OnGameEvent(GameEvent ev)
         {
-            // 未来扩展：把服务器 game event 映射到本地/远端表现
+            // 1) 最小验收：先打印
+            Debug.Log($"[GameEvent] type={ev.type} caster={ev.casterPlayerId} tick={ev.serverTick}");
         }
     }
 }

@@ -13,6 +13,9 @@ namespace Game
     /// </summary>
     public sealed class ClientWorld
     {
+        private static ClientWorld _instance;
+
+        public static ClientWorld Instance => _instance;
         private readonly Transform _spawnRoot;
         private readonly Dictionary<uint, NetworkPlayerView> _remote = new();
 
@@ -21,6 +24,7 @@ namespace Game
 
         public ClientWorld(Transform spawnRoot)
         {
+            _instance = this;
             _spawnRoot = spawnRoot;
         }
 
@@ -48,15 +52,15 @@ namespace Game
 
         public void ApplySnapshot(Net.WorldSnapshot ws, NetworkPlayerView remotePrefab, ClientGame owner)
         {
-            // 你们现有的 WorldSnapshot 解码结构在 Net 侧。
-            // 这里按 client.md 的惯例：ws.players 是列表，每个含 playerId/position/yaw/pitch。
 
             foreach (var p in ws.players)
             {
                 if (p.playerId == _localPlayerId)
                 {
-                    // 本地玩家：一般不做 transform 回放（避免与本地摄像机/武器表现冲突）。
-                    // 但你们可以在此做 debug 校验或做“服务器校正”。
+                    if (_local != null)
+                    {
+                        _local.ApplyServerSnapshot(p);
+                    }
                     continue;
                 }
 

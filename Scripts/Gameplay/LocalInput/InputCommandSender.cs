@@ -14,6 +14,8 @@ namespace Gameplay.LocalInput
 
         private ushort _seq;
         private uint _clientTick;
+        
+        public LocalInputFrame LastFrame { get; private set; }
 
         private uint _playerId;
         private bool _hasPlayerId;
@@ -45,6 +47,7 @@ namespace Gameplay.LocalInput
             _clientTick++;
 
             var frame = _sampler.Sample();
+            LastFrame = frame;
 
             // 1) 本地表现（立即反馈）
             _local?.ApplyLocalInput(in frame);

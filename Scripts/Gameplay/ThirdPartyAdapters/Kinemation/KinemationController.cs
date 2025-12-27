@@ -4,6 +4,7 @@
 using KINEMATION.FPSAnimationPack.Scripts.Player;
 using KINEMATION.FPSAnimationPack.Scripts.Sounds;
 using KINEMATION.FPSAnimationPack.Scripts.Weapon;
+using KINEMATION.ProceduralRecoilAnimationSystem.Runtime;
 
 namespace Gameplay.ThirdPartyAdapters.Kinemation
 {
@@ -17,7 +18,7 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
     public sealed class KinemationController : MonoBehaviour
     {
         [Header("References")]
-        public FPSPlayer fpsPlayer;
+        //public FPSPlayer fpsPlayer;
         public FPSPlayerSound playerSound;
 
         [Tooltip("可选：直接指定武器；不指定则用 fpsPlayer.GetActiveWeapon()")]
@@ -26,23 +27,22 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
         [Header("Aim")]
         public bool driveAimSound = true;
 
-        // RecoilAnimation 来自 KINEMATION.ProceduralRecoilAnimationSystem.Runtime
-        // 为了避免命名空间变动导致编译失败，这里用 Component + 反射设置 isAiming。
-        public Component recoilAnimation;
+        public RecoilAnimation recoilAnimation;
 
         private bool _fireHeld;
         private bool _aiming;
 
         private void Reset()
         {
-            if (fpsPlayer == null) fpsPlayer = GetComponentInChildren<FPSPlayer>();
+            //if (fpsPlayer == null) fpsPlayer = GetComponentInChildren<FPSPlayer>();
             if (playerSound == null) playerSound = GetComponentInChildren<FPSPlayerSound>();
+            if (recoilAnimation == null) recoilAnimation = GetComponentInChildren<RecoilAnimation>();
         }
 
         private FPSWeapon GetWeapon()
         {
             if (explicitWeapon != null) return explicitWeapon;
-            if (fpsPlayer != null) return fpsPlayer.GetActiveWeapon();
+            //if (fpsPlayer != null) return fpsPlayer.GetActiveWeapon();
             return null;
         }
 
@@ -54,21 +54,7 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
             if (driveAimSound && playerSound != null)
                 playerSound.PlayAimSound(_aiming);
 
-            // best-effort: recoilAnimation.isAiming = aiming
-            if (recoilAnimation != null)
-            {
-                var t = recoilAnimation.GetType();
-                var p = t.GetProperty("isAiming");
-                if (p != null && p.CanWrite)
-                {
-                    p.SetValue(recoilAnimation, aiming);
-                }
-                else
-                {
-                    var f = t.GetField("isAiming");
-                    if (f != null) f.SetValue(recoilAnimation, aiming);
-                }
-            }
+            recoilAnimation.isAiming = aiming;
         }
 
         public void SetFireHeld(bool held)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // 直接引用第三方类型（你已导入 KINEMATION）
 using KINEMATION.FPSAnimationPack.Scripts.Player;
@@ -18,11 +19,10 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
     public sealed class KinemationController : MonoBehaviour
     {
         [Header("References")]
-        //public FPSPlayer fpsPlayer;
         public FPSPlayerSound playerSound;
 
-        [Tooltip("可选：直接指定武器；不指定则用 fpsPlayer.GetActiveWeapon()")]
-        public FPSWeapon explicitWeapon;
+        [Tooltip("指定武器")]
+        public KinemationWeapon explicitWeapon;
 
         [Header("Aim")]
         public bool driveAimSound = true;
@@ -32,17 +32,20 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
         private bool _fireHeld;
         private bool _aiming;
 
+        private void Awake()
+        {
+            if (explicitWeapon != null) explicitWeapon.Initialize(gameObject);
+        }
+
         private void Reset()
         {
-            //if (fpsPlayer == null) fpsPlayer = GetComponentInChildren<FPSPlayer>();
             if (playerSound == null) playerSound = GetComponentInChildren<FPSPlayerSound>();
             if (recoilAnimation == null) recoilAnimation = GetComponentInChildren<RecoilAnimation>();
         }
 
-        private FPSWeapon GetWeapon()
+        public KinemationWeapon GetWeapon()
         {
             if (explicitWeapon != null) return explicitWeapon;
-            //if (fpsPlayer != null) return fpsPlayer.GetActiveWeapon();
             return null;
         }
 

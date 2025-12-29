@@ -601,7 +601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74edd773dbfd4e3896e11b3f3a5f1b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraPivot: {fileID: 4624713678413551677}
+  cameraPivot: {fileID: 6531556832486540244}
   driveCameraRotation: 1
   kinemation: {fileID: 6562296567775560777}
 --- !u!1 &778698618168150918
@@ -1052,14 +1052,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1969284843171471229}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2053516856675641954}
   m_Father: {fileID: 5858721631676870267}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6688875730224099277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1679,9 +1679,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddeb228c79b4df293795f013b7a696e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSound: {fileID: 0}
-  explicitWeapon: {fileID: 6688875730224099277}
-  driveAimSound: 1
+  playerSettings: {fileID: 11400000, guid: fb9ad5e060ed0c0438e8c8434b9c9887, type: 2}
+  skeletonRoot: {fileID: 5311496677902928421}
+  weaponBone: {fileID: 5858721631676870267}
+  weaponBoneAdditive: {fileID: 818898423262056711}
+  cameraPoint: {fileID: 6531556832486540244}
+  rightHand:
+    tip: {fileID: 6350356452761102634}
+    mid: {fileID: 7062040645355934059}
+    root: {fileID: 8545626950950975129}
+  leftHand:
+    tip: {fileID: 188612389931091498}
+    mid: {fileID: 4455650707944758716}
+    root: {fileID: 7579930601822291293}
+  weapon: {fileID: 6688875730224099277}
+  playerSound: {fileID: 6583668431503818376}
   recoilAnimation: {fileID: 5052172147991722441}
 --- !u!1 &3276921333867518814
 GameObject:

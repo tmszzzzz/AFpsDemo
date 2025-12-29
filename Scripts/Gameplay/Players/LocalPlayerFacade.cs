@@ -46,7 +46,7 @@ namespace Gameplay.Players
         {
             if (driveCameraRotation && cameraPivot != null)
             {
-                cameraPivot.localRotation = Quaternion.Euler(f.pitch, 0f, 0f);
+                if (kinemation != null) kinemation.SetPitch(f.pitch);
                 ClientWorld.Instance.ApplyLocalYaw(f.yaw);
             }
 

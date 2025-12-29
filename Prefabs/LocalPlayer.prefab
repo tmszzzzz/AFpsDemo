@@ -936,7 +936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2053516856675641954}
   - component: {fileID: 5438007105511436665}
-  - component: {fileID: 4063482177701810136}
+  - component: {fileID: 157887831900022586}
   m_Layer: 0
   m_Name: M1911
   m_TagString: Untagged
@@ -983,7 +983,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4063482177701810136
+--- !u!114 &157887831900022586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -992,7 +992,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1672064852738044120}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19e3adfc30c4f6aa3e13e9fb3346bd0, type: 3}
+  m_Script: {fileID: 11500000, guid: c5de2a47d51648acbcd7fb5640711854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1887860240575980090
@@ -1475,7 +1475,7 @@ GameObject:
   - component: {fileID: 4027904097406000042}
   - component: {fileID: 5052172147991722441}
   - component: {fileID: 665881861188656704}
-  - component: {fileID: 8639405873213001626}
+  - component: {fileID: 6583668431503818376}
   - component: {fileID: 6562296567775560777}
   m_Layer: 0
   m_Name: SK_Arms_Mono
@@ -1634,7 +1634,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8639405873213001626
+--- !u!114 &6583668431503818376
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1643,7 +1643,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3179201340550746145}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c7ebd8bc9b44e51b6213d640936a9d2, type: 3}
+  m_Script: {fileID: 11500000, guid: 7948fb3a3bf64dc59957286cc48113f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   equipSound: {fileID: 8300000, guid: b68b2e9eb5f496f4093e203b58088fec, type: 3}
@@ -1679,7 +1679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddeb228c79b4df293795f013b7a696e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSound: {fileID: 8639405873213001626}
+  playerSound: {fileID: 0}
   explicitWeapon: {fileID: 6688875730224099277}
   driveAimSound: 1
   recoilAnimation: {fileID: 5052172147991722441}

@@ -24,7 +24,7 @@ namespace Gameplay. ThirdPartyAdapters. Kinemation
 
         protected GameObject ownerPlayer;
         protected RecoilAnimation recoilAnimation;
-        protected FPSWeaponSound weaponSound;
+        protected KinemationWeaponSound weaponSound;
 
         protected Animator characterAnimator;
         protected Animator weaponAnimator;
@@ -64,7 +64,7 @@ namespace Gameplay. ThirdPartyAdapters. Kinemation
                 Debug.LogWarning("FPSWeapon: Animator not found!");
             }
 
-            weaponSound = GetComponentInChildren<FPSWeaponSound>();
+            weaponSound = GetComponentInChildren<KinemationWeaponSound>();
             if (weaponSound == null)
             {
                 Debug.LogWarning("FPSWeapon: FPS Weapon Sound not found!");

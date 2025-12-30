@@ -58,8 +58,7 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
         protected virtual void UpdateFOV()
         {
             if (_camera == null || _player == null) return;
-            
-            //TODO: _camera.fieldOfView = Mathf.Lerp(_baseFov, _player.GetWeapon().weaponSettings.aimFov, _player.AdsWeight);
+            _camera.fieldOfView = Mathf.Lerp(_baseFov, _player.GetWeaponSettings.aimFov, _player.AdsWeight);
         }
 
         private void Awake()

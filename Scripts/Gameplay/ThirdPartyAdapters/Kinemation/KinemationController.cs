@@ -31,6 +31,8 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
 
         [Header("Components")]
         [SerializeField] private KinemationWeapon weapon;                 // single weapon (hero prefab)
+        public FPSWeaponSettings GetWeaponSettings => weapon.weaponSettings;
+        
         [SerializeField] private KinemationPlayerSound playerSound;       // if you have KinemationPlayerSound, swap type
         [SerializeField] private RecoilAnimation recoilAnimation;  // procedural recoil component
 

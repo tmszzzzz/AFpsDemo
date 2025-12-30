@@ -415,8 +415,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lockCursor: 1
   mouseSensitivity: 2
-  pitchMin: -80
-  pitchMax: 80
+  pitchMin: -90
+  pitchMax: 90
   jumpKey: 32
   useKey: 101
   sprintKey: 304

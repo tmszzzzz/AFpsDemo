@@ -5,15 +5,16 @@ namespace Gameplay.LocalInput
     [Flags]
     public enum LocalButtons : uint
     {
-        None   = 0,
-        Jump   = 1 << 0,
-        Use    = 1 << 1,
-        Sprint = 1 << 2,
-
-        // 下面三项：默认只用于本地表现（可选择不发给服务器）
-        Aim    = 1 << 8,
-        Fire   = 1 << 9,
-        Reload = 1 << 10,
+        NONE   = 0,
+        MOUSE_FIRE_PRI   = 1u << 0,
+        MOUSE_FIRE_SEC = 1u << 1,
+        BUTTON_JUMP = 1u << 2,
+        BUTTON_ULTRA = 1u << 3,
+        BUTTON_SKILL_E = 1u << 4,
+        BUTTON_SKILL_SHIFT = 1u << 5,
+        BUTTON_SKILL_CTRL = 1u << 6,
+        BUTTON_HIT_V = 1u << 7,
+        BUTTON_RELOAD = 1 << 8,
     }
 
     public struct LocalInputFrame

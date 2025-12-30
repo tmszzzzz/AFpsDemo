@@ -17,7 +17,7 @@ namespace Gameplay.LocalInput
             // 仅在你扩展了服务器协议后再打开。
             if (!sendWeaponButtonsToServer)
             {
-                mask &= ~((uint)(LocalButtons.Aim | LocalButtons.Fire | LocalButtons.Reload));
+                mask &= ~((uint)(LocalButtons.MOUSE_FIRE_SEC | LocalButtons.MOUSE_FIRE_PRI | LocalButtons.BUTTON_RELOAD));
             }
 
             return new Net.InputCommand

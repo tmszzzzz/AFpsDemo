@@ -52,10 +52,10 @@ namespace Gameplay.Players
 
             if (kinemation != null)
             {
-                kinemation.SetAiming(f.Has(LocalButtons.Aim));
-                kinemation.SetFireHeld(f.Has(LocalButtons.Fire));
+                kinemation.SetAiming(f.Has(LocalButtons.MOUSE_FIRE_SEC));
+                kinemation.SetFireHeld(f.Has(LocalButtons.MOUSE_FIRE_PRI));
 
-                if (f.Has(LocalButtons.Reload))
+                if (f.Has(LocalButtons.BUTTON_RELOAD))
                     kinemation.Reload();
             }
         }

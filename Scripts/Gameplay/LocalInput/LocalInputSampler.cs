@@ -11,18 +11,21 @@ namespace Gameplay.LocalInput
         [Header("Look")]
         public bool lockCursor = true;
         public float mouseSensitivity = 2.0f;
-        public float pitchMin = -80f;
-        public float pitchMax = 80f;
+        public float pitchMin = -90f;
+        public float pitchMax = 90f;
 
         [Header("Keys")]
         public KeyCode jumpKey = KeyCode.Space;
-        public KeyCode useKey = KeyCode.E;
-        public KeyCode sprintKey = KeyCode.LeftShift;
+        public KeyCode ultraKey = KeyCode.Q;
+        public KeyCode skillEKey = KeyCode.E;
+        public KeyCode skillShiftKey = KeyCode.LeftShift;
+        public KeyCode skillCtrlKey = KeyCode.LeftControl;
+        public KeyCode hitVKey = KeyCode.V;
         public KeyCode reloadKey = KeyCode.R;
 
         [Header("Mouse")]
-        public int fireMouseButton = 0;
-        public int aimMouseButton = 1;
+        public int firePriMouseButton = 0;
+        public int fireSecMouseButton = 1;
 
         private float _yaw;
         private float _pitch;
@@ -50,13 +53,16 @@ namespace Gameplay.LocalInput
             float moveX = Input.GetAxisRaw("Horizontal");
             float moveY = Input.GetAxisRaw("Vertical");
 
-            LocalButtons b = LocalButtons.None;
-            if (Input.GetKey(jumpKey)) b |= LocalButtons.Jump;
-            if (Input.GetKey(useKey)) b |= LocalButtons.Use;
-            if (Input.GetKey(sprintKey)) b |= LocalButtons.Sprint;
-            if (Input.GetMouseButton(aimMouseButton)) b |= LocalButtons.Aim;
-            if (Input.GetMouseButton(fireMouseButton)) b |= LocalButtons.Fire;
-            if (Input.GetKeyDown(reloadKey)) b |= LocalButtons.Reload;
+            LocalButtons b = LocalButtons.NONE;
+            if (Input.GetKey(jumpKey)) b |= LocalButtons.BUTTON_JUMP;
+            if (Input.GetKey(skillEKey)) b |= LocalButtons.BUTTON_SKILL_E;
+            if (Input.GetKey(skillShiftKey)) b |= LocalButtons.BUTTON_SKILL_SHIFT;
+            if (Input.GetKey(ultraKey)) b |= LocalButtons.BUTTON_ULTRA;
+            if (Input.GetKey(skillCtrlKey)) b |= LocalButtons.BUTTON_SKILL_CTRL;
+            if (Input.GetKey(hitVKey)) b |= LocalButtons.BUTTON_HIT_V;
+            if (Input.GetMouseButton(fireSecMouseButton)) b |= LocalButtons.MOUSE_FIRE_SEC;
+            if (Input.GetMouseButton(firePriMouseButton)) b |= LocalButtons.MOUSE_FIRE_PRI;
+            if (Input.GetKeyDown(reloadKey)) b |= LocalButtons.BUTTON_RELOAD;
 
             return new LocalInputFrame
             {

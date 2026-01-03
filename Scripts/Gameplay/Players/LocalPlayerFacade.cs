@@ -31,6 +31,7 @@ namespace Gameplay.Players
         /// </summary>
         public void ApplyServerSnapshot(PlayerSnapshot p)
         {
+            kinemation.SetMove(new(p.posX - transform.position.x,p.posZ - transform.position.z));
             transform.position = new Vector3(p.posX, p.posY, p.posZ);
             if(!driveCameraRotation)
             {

@@ -133,7 +133,7 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
         public void SetMove(Vector2 move01)
         {
             _moveInput = move01;
-            if (_moveInput.sqrMagnitude > 1f) _moveInput.Normalize();
+            if (_moveInput.sqrMagnitude > 0.01f) _moveInput.Normalize();
         }
 
         /// <summary>

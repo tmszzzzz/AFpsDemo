@@ -46,7 +46,7 @@ namespace Game
 
             _world = new ClientWorld(SpawnRoot);
 
-            var builder = new InputCommandBuilder { sendWeaponButtonsToServer = sendWeaponButtonsToServer };
+            var builder = new InputCommandBuilder();
             _sender = new InputCommandSender(_netClient, inputSampler, builder);
         }
 
@@ -121,8 +121,32 @@ namespace Game
 
         public void OnGameEvent(GameEvent ev)
         {
-            // 1) 最小验收：先打印
-            Debug.Log($"[GameEvent] type={ev.type} caster={ev.casterPlayerId} tick={ev.serverTick}");
+            var local = _world.GetLocal();
+            bool isLocal = local != null && ev.casterPlayerId == PlayerId;
+
+            switch (ev.type)
+            {
+                case GameEventType.WeaponFired:
+                    if (isLocal) local.OnWeaponFired();
+                    Debug.Log($"[GameEvent] WeaponFired caster={ev.casterPlayerId} mag={ev.u8Param0} tick={ev.serverTick}");
+                    break;
+                case GameEventType.WeaponReloadStarted:
+                    if (isLocal) local.OnWeaponReloadStarted();
+                    Debug.Log($"[GameEvent] WeaponReloadStarted caster={ev.casterPlayerId} mag={ev.u8Param0} reload={ev.f32Param0:F2} tick={ev.serverTick}");
+                    break;
+                case GameEventType.WeaponReloadFinished:
+                    if (isLocal) local.OnWeaponReloadFinished();
+                    Debug.Log($"[GameEvent] WeaponReloadFinished caster={ev.casterPlayerId} mag={ev.u8Param0} tick={ev.serverTick}");
+                    break;
+                case GameEventType.MeleeHit:
+                    // 客户端暂无近战表现，先略过
+                    Debug.Log($"[GameEvent] MeleeHit caster={ev.casterPlayerId} tick={ev.serverTick}");
+                    break;
+                case GameEventType.DashStarted:
+                default:
+                    Debug.Log($"[GameEvent] type={ev.type} caster={ev.casterPlayerId} tick={ev.serverTick}");
+                    break;
+            }
         }
     }
 }

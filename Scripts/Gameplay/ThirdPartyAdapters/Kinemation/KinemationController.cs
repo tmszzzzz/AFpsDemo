@@ -192,6 +192,13 @@ namespace Gameplay.ThirdPartyAdapters.Kinemation
             else weapon.OnFireReleased();
         }
 
+        public void FireOnce()
+        {
+            if (weapon == null) return;
+            weapon.OnFirePressed();
+            weapon.OnFireReleased();
+        }
+
         public void Reload()
         {
             if (weapon == null) return;

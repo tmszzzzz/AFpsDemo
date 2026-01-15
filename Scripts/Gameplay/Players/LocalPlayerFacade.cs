@@ -54,11 +54,22 @@ namespace Gameplay.Players
             if (kinemation != null)
             {
                 kinemation.SetAiming(f.Has(LocalButtons.MOUSE_FIRE_SEC));
-                kinemation.SetFireHeld(f.Has(LocalButtons.MOUSE_FIRE_PRI));
-
-                if (f.Has(LocalButtons.BUTTON_RELOAD))
-                    kinemation.Reload();
             }
+        }
+
+        public void OnWeaponFired()
+        {
+            if (kinemation != null) kinemation.FireOnce();
+        }
+
+        public void OnWeaponReloadStarted()
+        {
+            if (kinemation != null) kinemation.Reload();
+        }
+
+        public void OnWeaponReloadFinished()
+        {
+            // Placeholder for reload-end visuals if needed.
         }
     }
 }

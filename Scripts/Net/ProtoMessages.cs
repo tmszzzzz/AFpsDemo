@@ -75,6 +75,7 @@ namespace Net
         public const uint BUTTON_SKILL_SHIFT = 1u << 5;
         public const uint BUTTON_SKILL_CTRL = 1u << 6;
         public const uint BUTTON_HIT_V = 1u << 7;
+        public const uint BUTTON_RELOAD = 1u << 8;
     }
     
     public struct PlayerSnapshot
@@ -107,6 +108,11 @@ namespace Net
     public enum GameEventType : byte
     {
         DashStarted = 1,
+        WeaponFired = 2,
+        WeaponDryFire = 3,
+        WeaponReloadStarted = 4,
+        WeaponReloadFinished = 5,
+        MeleeHit = 6,
     }
 
     public struct GameEvent

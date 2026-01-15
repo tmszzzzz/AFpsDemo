@@ -8,17 +8,9 @@ namespace Gameplay.LocalInput
     /// </summary>
     public sealed class InputCommandBuilder
     {
-        public bool sendWeaponButtonsToServer = false;
-
         public InputCommand Build(uint playerId, ushort seq, uint clientTick, in LocalInputFrame f)
         {
             uint mask = (uint)f.buttons;
-
-            // 仅在你扩展了服务器协议后再打开。
-            if (!sendWeaponButtonsToServer)
-            {
-                mask &= ~((uint)(LocalButtons.MOUSE_FIRE_SEC | LocalButtons.MOUSE_FIRE_PRI | LocalButtons.BUTTON_RELOAD));
-            }
 
             return new Net.InputCommand
             {

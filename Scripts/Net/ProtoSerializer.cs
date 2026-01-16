@@ -306,6 +306,10 @@ namespace Net
 
             if (!ReadF32(msg.Payload, ref offset, out ev.f32Param0)) return false;
             if (!ReadF32(msg.Payload, ref offset, out ev.f32Param1)) return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.f32Param2)) return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.f32Param3)) return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.f32Param4)) return false;
+            if (!ReadF32(msg.Payload, ref offset, out ev.f32Param5)) return false;
 
             return true;
         }

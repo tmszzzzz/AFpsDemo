@@ -18,6 +18,10 @@ namespace Game
         public NetworkPlayerView RemotePlayerPrefab;
         public Transform SpawnRoot;
 
+        [Header("Projectiles")]
+        public GameObject ProjectileHitEffectPrefab;
+        public Material ProjectileLineMaterial;
+
         [Header("Input")]
         public LocalInputSampler inputSampler;
         public bool sendWeaponButtonsToServer = false;
@@ -142,11 +146,50 @@ namespace Game
                     // 客户端暂无近战表现，先略过
                     Debug.Log($"[GameEvent] MeleeHit caster={ev.casterPlayerId} tick={ev.serverTick}");
                     break;
+                case GameEventType.ProjectileSpawn:
+                    SpawnProjectileLine(ev);
+                    break;
+                case GameEventType.ProjectileHitWorld:
+                case GameEventType.ProjectileHitActor:
+                    SpawnHitEffect(ev);
+                    break;
                 case GameEventType.DashStarted:
                 default:
                     Debug.Log($"[GameEvent] type={ev.type} caster={ev.casterPlayerId} tick={ev.serverTick}");
                     break;
             }
+        }
+
+        private void SpawnProjectileLine(GameEvent ev)
+        {
+            if (ProjectileLineMaterial == null) return;
+
+            Vector3 origin = new(ev.f32Param0, ev.f32Param1, ev.f32Param2);
+            Vector3 dir = new(ev.f32Param3, ev.f32Param4, ev.f32Param5);
+            if (dir.sqrMagnitude <= 1e-6f) return;
+            dir.Normalize();
+
+            float length = ev.u8Param0 == 0 ? 30f : 15f;
+            float duration = ev.u8Param0 == 0 ? 0.05f : 0.2f;
+
+            var go = new GameObject($"ProjectileLine_{ev.u32Param0}");
+            var lr = go.AddComponent<LineRenderer>();
+            lr.material = ProjectileLineMaterial;
+            lr.startWidth = 0.03f;
+            lr.endWidth = 0.01f;
+            lr.positionCount = 2;
+            lr.SetPosition(0, origin);
+            lr.SetPosition(1, origin + dir * length);
+            Destroy(go, duration);
+        }
+
+        private void SpawnHitEffect(GameEvent ev)
+        {
+            if (ProjectileHitEffectPrefab == null) return;
+
+            Vector3 pos = new(ev.f32Param0, ev.f32Param1, ev.f32Param2);
+            var go = Instantiate(ProjectileHitEffectPrefab, pos, Quaternion.identity);
+            Destroy(go, 2.0f);
         }
     }
 }

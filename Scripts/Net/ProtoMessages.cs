@@ -109,10 +109,12 @@ namespace Net
     {
         DashStarted = 1,
         WeaponFired = 2,
-        WeaponDryFire = 3,
         WeaponReloadStarted = 4,
         WeaponReloadFinished = 5,
         MeleeHit = 6,
+        ProjectileSpawn = 7,
+        ProjectileHitWorld = 8,
+        ProjectileHitActor = 9,
     }
 
     public struct GameEvent
@@ -130,6 +132,10 @@ namespace Net
 
         public float         f32Param0;
         public float         f32Param1;
+        public float         f32Param2;
+        public float         f32Param3;
+        public float         f32Param4;
+        public float         f32Param5;
     }
 
     public struct NetMessage

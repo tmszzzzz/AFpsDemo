@@ -396,12 +396,9 @@ MonoBehaviour:
   PlayerName: Player
   LocalPlayerPrefab: {fileID: 8770904959054442930, guid: 50e805e26f51d2e4c852416c8e91ecd7,
     type: 3}
-  RemotePlayerPrefab: {fileID: -3607570795352206730, guid: 21f047d119dfbcc47829602465120174,
+  RemotePlayerPrefab: {fileID: 879133075573464737, guid: 21f047d119dfbcc47829602465120174,
     type: 3}
   SpawnRoot: {fileID: 0}
-  ProjectileHitEffectPrefab: {fileID: 0}
-  ProjectileLineMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000,
-    type: 0}
   inputSampler: {fileID: 316319598}
   sendWeaponButtonsToServer: 0
 --- !u!114 &316319598

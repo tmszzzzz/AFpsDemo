@@ -18,10 +18,6 @@ namespace Game
         public NetworkPlayerView RemotePlayerPrefab;
         public Transform SpawnRoot;
 
-        [Header("Projectiles")]
-        public GameObject ProjectileHitEffectPrefab;
-        public Material ProjectileLineMaterial;
-
         [Header("Input")]
         public LocalInputSampler inputSampler;
         public bool sendWeaponButtonsToServer = false;
@@ -148,6 +144,7 @@ namespace Game
                     break;
                 case GameEventType.ProjectileSpawn:
                     SpawnProjectileLine(ev);
+                    SpawnMuzzleFlash(ev);
                     break;
                 case GameEventType.ProjectileHitWorld:
                 case GameEventType.ProjectileHitActor:
@@ -162,19 +159,34 @@ namespace Game
 
         private void SpawnProjectileLine(GameEvent ev)
         {
-            if (ProjectileLineMaterial == null) return;
-
             Vector3 origin = new(ev.f32Param0, ev.f32Param1, ev.f32Param2);
+            var local = _world.GetLocal();
+            var remote = _world.GetRemote(ev.casterPlayerId);
+            if (local != null && ev.casterPlayerId == PlayerId)
+            {
+                origin = local.GetMuzzlePosition(origin);
+            }
+            else if (remote != null)
+            {
+                origin = remote.GetMuzzlePosition(origin);
+            }
             Vector3 dir = new(ev.f32Param3, ev.f32Param4, ev.f32Param5);
             if (dir.sqrMagnitude <= 1e-6f) return;
             dir.Normalize();
+
+            Material mat = null;
+            if (local != null && ev.casterPlayerId == PlayerId)
+                mat = local.GetProjectileLineMaterial();
+            else if (remote != null)
+                mat = remote.GetProjectileLineMaterial();
+            if (mat == null) return;
 
             float length = ev.u8Param0 == 0 ? 30f : 15f;
             float duration = ev.u8Param0 == 0 ? 0.05f : 0.2f;
 
             var go = new GameObject($"ProjectileLine_{ev.u32Param0}");
             var lr = go.AddComponent<LineRenderer>();
-            lr.material = ProjectileLineMaterial;
+            lr.material = mat;
             lr.startWidth = 0.03f;
             lr.endWidth = 0.01f;
             lr.positionCount = 2;
@@ -183,12 +195,43 @@ namespace Game
             Destroy(go, duration);
         }
 
+        private void SpawnMuzzleFlash(GameEvent ev)
+        {
+            var local = _world.GetLocal();
+            var remote = _world.GetRemote(ev.casterPlayerId);
+
+            Transform muzzle = null;
+            GameObject prefab = null;
+
+            if (local != null && ev.casterPlayerId == PlayerId)
+            {
+                muzzle = local.muzzle;
+                prefab = local.GetMuzzleFlashEffect();
+            }
+            else if (remote != null)
+            {
+                muzzle = remote.muzzle;
+                prefab = remote.GetMuzzleFlashEffect();
+            }
+
+            if (prefab == null || muzzle == null) return;
+
+            var go = Instantiate(prefab, muzzle.position, muzzle.rotation,muzzle);
+            Destroy(go, 1.5f);
+        }
+
         private void SpawnHitEffect(GameEvent ev)
         {
-            if (ProjectileHitEffectPrefab == null) return;
-
             Vector3 pos = new(ev.f32Param0, ev.f32Param1, ev.f32Param2);
-            var go = Instantiate(ProjectileHitEffectPrefab, pos, Quaternion.identity);
+            var local = _world.GetLocal();
+            var remote = _world.GetRemote(ev.casterPlayerId);
+            GameObject prefab = null;
+            if (local != null && ev.casterPlayerId == PlayerId)
+                prefab = local.GetProjectileHitEffect();
+            else if (remote != null)
+                prefab = remote.GetProjectileHitEffect();
+            if (prefab == null) return;
+            var go = Instantiate(prefab, pos, Quaternion.identity);
             Destroy(go, 2.0f);
         }
     }

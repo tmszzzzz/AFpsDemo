@@ -18,6 +18,12 @@ namespace Game
         public bool IsLocalPlayer =>
             Owner != null && Owner.PlayerId == PlayerId;
 
+        [Header("Projectile FX")]
+        public Material projectileLineMaterial;
+        public GameObject projectileHitEffectPrefab;
+        public GameObject muzzleFlashPrefab;
+        public Transform muzzle;
+
         public void Initialize(uint playerId, ClientGame owner)
         {
             PlayerId = playerId;
@@ -39,6 +45,11 @@ namespace Game
             // - 根据 locomotionState 切换跑/站动画
             // - 显示血条等 UI
         }
+
+        public Material GetProjectileLineMaterial() => projectileLineMaterial;
+        public GameObject GetProjectileHitEffect() => projectileHitEffectPrefab;
+        public GameObject GetMuzzleFlashEffect() => muzzleFlashPrefab;
+        public Vector3 GetMuzzlePosition(Vector3 fallback) => muzzle != null ? muzzle.position : fallback;
 
         // 3.4 的 Dash 播放钩子会放在这里，目前按要求暂时不实现 PlayDash()
         // public void PlayDash() { ... }

@@ -50,6 +50,12 @@ namespace Game
 
         public LocalPlayerFacade GetLocal() => _local;
 
+        public NetworkPlayerView GetRemote(uint playerId)
+        {
+            _remote.TryGetValue(playerId, out var v);
+            return v;
+        }
+
         public void ApplySnapshot(Net.WorldSnapshot ws, NetworkPlayerView remotePrefab, ClientGame owner)
         {
 

@@ -18,6 +18,12 @@ namespace Gameplay.Players
 
         [Header("Third-party")]
         public KinemationController kinemation;
+        public Transform muzzle;
+
+        [Header("Projectile FX")]
+        public Material projectileLineMaterial;
+        public GameObject projectileHitEffectPrefab;
+        public GameObject muzzleFlashPrefab;
 
         private void Reset()
         {
@@ -71,5 +77,14 @@ namespace Gameplay.Players
         {
             // Placeholder for reload-end visuals if needed.
         }
+
+        public Vector3 GetMuzzlePosition(Vector3 fallback)
+        {
+            return muzzle != null ? muzzle.position : fallback;
+        }
+
+        public Material GetProjectileLineMaterial() => projectileLineMaterial;
+        public GameObject GetProjectileHitEffect() => projectileHitEffectPrefab;
+        public GameObject GetMuzzleFlashEffect() => muzzleFlashPrefab;
     }
 }

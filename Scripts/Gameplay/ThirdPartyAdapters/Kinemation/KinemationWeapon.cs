@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Gameplay. ThirdPartyAdapters. Kinemation
 {
-    public class KinemationWeapon : MonoBehaviour, IAmmoProvider
+    public class KinemationWeapon : MonoBehaviour
     {
         public float UnEquipDelay => unEquipDelay;
         public FireMode ActiveFireMode => fireMode;
@@ -43,9 +43,6 @@ namespace Gameplay. ThirdPartyAdapters. Kinemation
         protected float emptyReloadDelay;
         protected float tacReloadDelay;
 
-        protected int _activeAmmo;
-        
-        protected bool _isReloading;
         protected bool _isFiring;
 
         protected KinemationCameraAnimator cameraAnimator;
@@ -55,8 +52,6 @@ namespace Gameplay. ThirdPartyAdapters. Kinemation
             ownerPlayer = owner;
             recoilAnimation = owner.GetComponent<RecoilAnimation>();
             characterAnimator = owner.GetComponent<Animator>();
-
-            _activeAmmo = weaponSettings.ammo;
 
             weaponAnimator = GetComponentInChildren<Animator>();
             if (weaponAnimator == null)
@@ -107,15 +102,10 @@ namespace Gameplay. ThirdPartyAdapters. Kinemation
 
         public virtual void OnReload()
         {
-            if (_activeAmmo == weaponSettings.ammo) return;
-            
-            var reloadHash = _activeAmmo == 0 ? RELOAD_EMPTY : RELOAD_TAC;
+            var reloadHash = RELOAD_TAC;
             characterAnimator.Play(reloadHash, -1, 0f);
             weaponAnimator.Play(reloadHash, -1, 0f);
 
-            float delay = _activeAmmo == 0 ? emptyReloadDelay : tacReloadDelay;
-            Invoke(nameof(ResetActiveAmmo), delay * weaponSettings.ammoResetTimeScale);
-            _isReloading = true;
         }
 
         public void OnFireModeChange()
@@ -171,43 +161,18 @@ namespace Gameplay. ThirdPartyAdapters. Kinemation
 
         private void OnFire()
         {
-            if (!_isFiring || _isReloading) return;
-
-            if (_activeAmmo == 0)
-            {
-                OnFireReleased();
-                return;
-            }
+            if (!_isFiring) return;
             
             recoilAnimation.Play();
             if (weaponSound != null) weaponSound.PlayFireSound();
             if (cameraAnimator != null) cameraAnimator.PlayCameraShake(weaponSettings.cameraShake);
 
             if (weaponSettings.useFireClip) characterAnimator.Play(FIRE, -1, 0f);
-            weaponAnimator.Play(weaponSettings.hasFireOut && _activeAmmo == 1
-                ? FIREOUT
-                : FIRE, -1, 0f);
-
-            _activeAmmo--;
+            weaponAnimator.Play(FIRE, -1, 0f);
             
             if (fireMode == FireMode.Semi) return;
             Invoke(nameof(OnFire), 60f / weaponSettings.fireRate);
         }
 
-        protected void ResetActiveAmmo()
-        {
-            _activeAmmo = weaponSettings.ammo;
-            _isReloading = false;
-        }
-
-        public int GetActiveAmmo()
-        {
-            return _activeAmmo;
-        }
-
-        public int GetMaxAmmo()
-        {
-            return weaponSettings.ammo;
-        }
     }
 }

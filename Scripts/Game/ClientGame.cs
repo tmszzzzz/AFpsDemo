@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using Net;
 using Gameplay.LocalInput;
 using Gameplay.Players;
@@ -7,6 +8,19 @@ namespace Game
 {
     public sealed class ClientGame : MonoBehaviour
     {
+
+        private struct PendingProjectile
+        {
+            public Vector3 origin;
+            public Vector3 dir;
+            public float spawnTime;
+            public byte kind;
+            public uint casterId;
+            public Material material;
+        }
+
+        private readonly Dictionary<uint, PendingProjectile> _pendingProjectiles = new();
+
         [Header("Server Config")]
         public string ServerHost = "127.0.0.1";
         public int TcpPort = 5000;
@@ -75,6 +89,8 @@ namespace Game
             }
 
             // 1) 输入 -> 本地表现 + 发包
+            ProcessPendingProjectiles();
+
             _sender.Tick(Time.deltaTime);
         }
         
@@ -148,6 +164,7 @@ namespace Game
                     break;
                 case GameEventType.ProjectileHitWorld:
                 case GameEventType.ProjectileHitActor:
+                    ResolveProjectileLine(ev);
                     SpawnHitEffect(ev);
                     break;
                 case GameEventType.DashStarted:
@@ -181,17 +198,86 @@ namespace Game
                 mat = remote.GetProjectileLineMaterial();
             if (mat == null) return;
 
-            float length = ev.u8Param0 == 0 ? 30f : 15f;
-            float duration = ev.u8Param0 == 0 ? 0.05f : 0.2f;
+            var pending = new PendingProjectile
+            {
+                origin = origin,
+                dir = dir,
+                spawnTime = Time.time,
+                kind = ev.u8Param0,
+                casterId = ev.casterPlayerId,
+                material = mat
+            };
 
-            var go = new GameObject($"ProjectileLine_{ev.u32Param0}");
+            if (ev.u8Param0 == 0)
+            {
+                _pendingProjectiles[ev.u32Param0] = pending;
+                return;
+            }
+
+            DrawProjectileLine(pending, origin + dir * 15f, 0.2f);
+        }
+
+
+        private static class ListPool<T>
+        {
+            private static readonly Stack<List<T>> Pool = new();
+
+            public static List<T> Get()
+            {
+                if (Pool.Count > 0) return Pool.Pop();
+                return new List<T>();
+            }
+
+            public static void Release(List<T> list)
+            {
+                list.Clear();
+                Pool.Push(list);
+            }
+        }
+
+        private void ProcessPendingProjectiles()
+        {
+            if (_pendingProjectiles.Count == 0) return;
+
+            var toRemove = ListPool<uint>.Get();
+            foreach (var kv in _pendingProjectiles)
+            {
+                var pending = kv.Value;
+                if (pending.kind != 0) continue;
+
+                if (Time.time - pending.spawnTime >= 0.1f)
+                {
+                    DrawProjectileLine(pending, pending.origin + pending.dir * 30f, 0.05f);
+                    toRemove.Add(kv.Key);
+                }
+            }
+
+            for (int i = 0; i < toRemove.Count; ++i)
+                _pendingProjectiles.Remove(toRemove[i]);
+            ListPool<uint>.Release(toRemove);
+        }
+
+        private void ResolveProjectileLine(GameEvent ev)
+        {
+            if (!_pendingProjectiles.TryGetValue(ev.u32Param0, out var pending))
+                return;
+
+            Vector3 hitPoint = new(ev.f32Param0, ev.f32Param1, ev.f32Param2);
+            DrawProjectileLine(pending, hitPoint, 0.05f);
+            _pendingProjectiles.Remove(ev.u32Param0);
+        }
+
+        private void DrawProjectileLine(in PendingProjectile pending, Vector3 end, float duration)
+        {
+            var go = new GameObject($"ProjectileLine_{pending.casterId}_{Time.frameCount}");
             var lr = go.AddComponent<LineRenderer>();
-            lr.material = mat;
+            lr.material = pending.material;
             lr.startWidth = 0.03f;
             lr.endWidth = 0.01f;
             lr.positionCount = 2;
-            lr.SetPosition(0, origin);
-            lr.SetPosition(1, origin + dir * length);
+            Vector3 start = Vector3.Lerp(pending.origin, end, 0.2f);
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, end);
             Destroy(go, duration);
         }
 
@@ -223,6 +309,7 @@ namespace Game
         private void SpawnHitEffect(GameEvent ev)
         {
             Vector3 pos = new(ev.f32Param0, ev.f32Param1, ev.f32Param2);
+            Vector3 normal = new(ev.f32Param3, ev.f32Param4, ev.f32Param5);
             var local = _world.GetLocal();
             var remote = _world.GetRemote(ev.casterPlayerId);
             GameObject prefab = null;
@@ -231,7 +318,8 @@ namespace Game
             else if (remote != null)
                 prefab = remote.GetProjectileHitEffect();
             if (prefab == null) return;
-            var go = Instantiate(prefab, pos, Quaternion.identity);
+            Quaternion rot = normal.sqrMagnitude > 1e-6f ? Quaternion.FromToRotation(Vector3.up, normal) : Quaternion.identity;
+            var go = Instantiate(prefab, pos, rot);
             Destroy(go, 2.0f);
         }
     }
